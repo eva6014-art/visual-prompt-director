@@ -242,6 +242,41 @@ select.fi option{background:var(--s2)}
 .vbtn:hover{color:var(--text);border-color:var(--border2);}
 .vbtn.del:hover{color:var(--red);border-color:var(--red);}
 
+/* ── Intensity ── */
+.intensity-row{display:flex;gap:8px;flex-wrap:wrap;}
+.iopt{
+  flex:1;min-width:80px;
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center;
+}
+.iopt:hover{border-color:var(--border2);}
+.iopt input{display:none;}
+.iopt span{font-size:12px;color:var(--muted);font-weight:500;line-height:1.4;}
+.iopt small{font-size:10px;color:var(--muted);display:block;margin-top:2px;}
+.iopt:has(input:checked){border-color:var(--gold);background:rgba(201,169,110,.08);}
+.iopt:has(input:checked) span{color:var(--gold);}
+.iopt:has(input:checked) small{color:var(--gold);opacity:.7;}
+
+/* ── Toggle ── */
+.toggle-row{display:flex;align-items:center;gap:14px;cursor:pointer;padding:4px 0;}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{
+  position:absolute;inset:0;background:var(--border2);border-radius:24px;
+  transition:.25s;cursor:pointer;
+}
+.toggle-slider:before{
+  content:'';position:absolute;
+  width:18px;height:18px;left:3px;bottom:3px;
+  background:var(--muted);border-radius:50%;transition:.25s;
+}
+.toggle-switch input:checked + .toggle-slider{background:rgba(201,169,110,.3);border:1px solid var(--gold);}
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(20px);background:var(--gold);}
+.toggle-info{flex:1;}
+.toggle-title{font-size:12px;color:var(--text);font-weight:500;}
+.toggle-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5;}
+
 /* ── Toast ── */
 .toast{
   position:fixed;bottom:28px;right:28px;
@@ -359,22 +394,31 @@ select.fi option{background:var(--s2)}
       </div>
       <select class="fi" id="f-light">
         <option value="">選擇燈光...</option>
+        <optgroup label="🌿 柔和自然光（推薦）">
+        <option value="soft natural window light, gentle shadows, warm and inviting">自然窗光（柔和）</option>
+        <option value="soft ambient daylight, even illumination, no harsh shadows">柔和日光漫射</option>
+        <option value="cloudy overcast daylight, soft diffused light, natural skin tones">陰天自然光</option>
+        <option value="warm indoor daylight, cozy atmosphere, gentle contrast">溫暖室內日光</option>
+        <option value="Korean beauty soft diffused light, dewy skin, gentle glow">韓系美妝柔光</option>
+        <option value="golden hour natural light, warm soft glow, long shadows">黃金時刻自然光</option>
+        </optgroup>
+        <optgroup label="🎬 戲劇商業光">
         <option value="soft studio lighting with subtle shadows">柔和棚拍燈光</option>
-        <option value="cinematic side lighting with deep shadows">電影側光</option>
-        <option value="golden hour natural light">黃金時刻自然光</option>
         <option value="clean white high-key advertising light">高調白底廣告燈</option>
-        <option value="neon accent lighting on dark background">霓虹點綴暗背景</option>
-        <option value="luxury warm tungsten glow">奢華暖鎢絲光</option>
-        <option value="cool blue tech lighting">冷藍科技光</option>
+        <option value="cinematic side lighting with deep shadows">電影側光</option>
         <option value="backlit rim light silhouette">逆光輪廓光</option>
-        <option value="Korean beauty soft diffused light">韓系美妝柔光</option>
+        <option value="luxury warm tungsten glow">奢華暖鎢絲光</option>
+        <option value="neon accent lighting on dark background">霓虹點綴暗背景</option>
+        <option value="cool blue tech lighting">冷藍科技光</option>
+        </optgroup>
       </select>
       <div class="xpanel" id="x-light">
         <strong>燈光說明：</strong><br>
-        • <em>電影側光</em>：強烈側光製造深陰影，戲劇感、高質感<br>
-        • <em>高調白底廣告燈</em>：均勻明亮，無死角，適合電商、EDM<br>
-        • <em>韓系美妝柔光</em>：霧感柔光，皮膚通透，適合美妝廣告<br>
-        • <em>逆光輪廓光</em>：輪廓光讓主體從背景分離，視覺衝擊強
+        • <em>自然窗光</em>：最接近真實生活的光線，親切自然，避免塑膠感<br>
+        • <em>柔和日光漫射</em>：均勻無死角，皮膚質感真實，適合生活感廣告<br>
+        • <em>陰天自然光</em>：最柔和的自然光，無強烈陰影，適合清新風格<br>
+        • <em>電影側光</em>：強烈側光製造深陰影，戲劇感強，適合高端品牌<br>
+        • <em>高調白底廣告燈</em>：均勻明亮，無死角，適合電商、EDM
       </div>
     </div>
   </div>
@@ -425,13 +469,21 @@ select.fi option{background:var(--s2)}
         <button class="xbtn" onclick="toggleX('render')">？ 說明</button>
       </div>
       <select class="fi" id="f-render">
-        <option value="luxury commercial render, flawless skin, premium product finish">精品商業渲染</option>
+        <optgroup label="🌿 柔和自然風格（推薦）">
+        <option value="soft natural commercial photography, authentic skin texture, warm and approachable">柔和自然商業攝影</option>
+        <option value="soft matte rendering, gentle contrast, warm color grading, lifestyle feel">柔和霧面生活感</option>
+        <option value="warm friendly atmosphere, natural candid moment, soft commercial feel">溫暖親切氛圍</option>
+        <option value="Korean soft commercial mood, dewy natural skin, gentle pastel tones">韓系柔和商業感</option>
+        <option value="airy clean composition, subtle film texture, natural imperfections">清新空氣感</option>
+        </optgroup>
+        <optgroup label="🎬 商業強度風格">
         <option value="Korean advertising visual, beauty campaign quality">韓系廣告視覺</option>
-        <option value="cinematic editorial photography, award winning">電影感 Editorial</option>
-        <option value="premium product visualization, studio quality">頂級產品棚拍</option>
         <option value="social media optimized, high engagement visual">社群最佳化視覺</option>
         <option value="EDM banner ready, clean background, text space">EDM Banner 直用</option>
+        <option value="cinematic editorial photography, award winning">電影感 Editorial</option>
+        <option value="luxury commercial render, flawless skin, premium product finish">精品商業渲染</option>
         <option value="hyperrealistic advertising photography">超寫實廣告攝影</option>
+        </optgroup>
         <option value="">不加後綴</option>
       </select>
       <div class="xpanel" id="x-render">
@@ -462,6 +514,36 @@ select.fi option{background:var(--s2)}
       <span class="tag neg" data-v="cluttered background">雜亂背景</span>
     </div>
     <textarea class="fi" id="f-neg" placeholder="其他排除項目..." style="min-height:44px"></textarea>
+  </div>
+
+  <div class="fb">
+    <div class="fb-head">
+      <span class="fb-label">09 · 風格強度</span>
+      <span class="fb-tag">Intensity</span>
+    </div>
+    <div class="intensity-row">
+      <label class="iopt"><input type="radio" name="intensity" value="subtle"> <span>Subtle<br><small>輕柔自然</small></span></label>
+      <label class="iopt"><input type="radio" name="intensity" value="balanced" checked> <span>Balanced<br><small>平衡（預設）</small></span></label>
+      <label class="iopt"><input type="radio" name="intensity" value="strong"> <span>Strong<br><small>強度商業感</small></span></label>
+      <label class="iopt"><input type="radio" name="intensity" value="extreme"> <span>Extreme<br><small>極致高強度</small></span></label>
+    </div>
+  </div>
+
+  <div class="fb">
+    <div class="fb-head">
+      <span class="fb-label">10 · 避免 AI 感</span>
+      <span class="fb-tag">Natural</span>
+    </div>
+    <label class="toggle-row" id="antiAiToggleRow">
+      <div class="toggle-switch">
+        <input type="checkbox" id="antiAiToggle">
+        <span class="toggle-slider"></span>
+      </div>
+      <div class="toggle-info">
+        <div class="toggle-title">開啟「去 AI 感」模式</div>
+        <div class="toggle-desc">自動加入：自然紋理、柔和對比、真實氛圍、非塑膠皮膚感</div>
+      </div>
+    </label>
   </div>
 
   <div class="btn-row">
@@ -503,15 +585,23 @@ select.fi option{background:var(--s2)}
 
   <div class="fb">
     <div class="fb-head"><span class="fb-label">強化方向（可複選）</span></div>
-    <div class="tags" id="dir-tags">
-      <span class="dtag" data-d="更像廣告">更像廣告</span>
-      <span class="dtag" data-d="更高級精品感">更高級精品感</span>
-      <span class="dtag" data-d="更像韓系品牌">更像韓系品牌</span>
-      <span class="dtag" data-d="更適合 EDM">更適合 EDM</span>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">🌿 柔和自然</div>
+    <div class="tags" id="dir-tags" style="margin-bottom:8px">
+      <span class="dtag" data-d="更自然真實、避免過度 AI 感">更自然真實</span>
+      <span class="dtag" data-d="更柔和舒服、降低戲劇感">更柔和舒服</span>
+      <span class="dtag" data-d="更像韓系柔和商業風格">韓系柔和商業</span>
+      <span class="dtag" data-d="更有生活感、親切氛圍">更有生活感</span>
       <span class="dtag" data-d="更適合社群貼文">更適合社群貼文</span>
-      <span class="dtag" data-d="更像動畫海報">更像動畫海報</span>
       <span class="dtag" data-d="更簡潔精準">更簡潔精準</span>
-      <span class="dtag" data-d="增加細節層次">增加細節層次</span>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;margin-top:4px;">🎬 強度提升</div>
+    <div class="tags">
+      <span class="dtag" data-d="更像廣告、更有商業感">更像廣告</span>
+      <span class="dtag" data-d="更高級精品感">更高級精品感</span>
+      <span class="dtag" data-d="更像韓系高端品牌">更像韓系品牌</span>
+      <span class="dtag" data-d="更適合 EDM Banner">更適合 EDM</span>
+      <span class="dtag" data-d="更像動畫海報">更像動畫海報</span>
+      <span class="dtag" data-d="增加視覺細節層次">增加細節層次</span>
     </div>
   </div>
 
@@ -689,6 +779,22 @@ function buildPrompt() {
   const negExtra= document.getElementById('f-neg').value.trim();
   const negs    = [...SEL.negs];
   const model   = document.getElementById('globalModel').value;
+  const intensity = document.querySelector('input[name="intensity"]:checked')?.value || 'balanced';
+  const antiAi  = document.getElementById('antiAiToggle').checked;
+
+  // 風格強度修飾詞
+  const intensityMap = {
+    subtle:   'subtle, gentle, soft and understated,',
+    balanced: '',
+    strong:   'bold commercial, high-impact,',
+    extreme:  'ultra dramatic, cinematic extreme, maximum visual intensity,',
+  };
+  const intensityPrefix = intensityMap[intensity] || '';
+
+  // 避免 AI 感附加詞
+  const antiAiSuffix = antiAi
+    ? ', natural imperfections, authentic lighting, subtle skin texture, non-plastic skin, soft contrast, realistic atmosphere, natural candid moment'
+    : '';
 
   const blocks = [
     { label:'主體',       value: subject },
@@ -736,6 +842,8 @@ function clearAll() {
   document.querySelectorAll('.tag').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.style-card').forEach(c => c.classList.remove('on'));
   document.getElementById('outputSection').style.display = 'none';
+  document.querySelector('input[name="intensity"][value="balanced"]').checked = true;
+  document.getElementById('antiAiToggle').checked = false;
 }
 
 function cpBlock(btn) {
@@ -788,20 +896,25 @@ async function enhancePrompt() {
   const model = document.getElementById('enhModel').value;
   const sfx   = MODEL_SUFFIXES[model] || '';
 
+  const antiAiOn = document.getElementById('antiAiToggle').checked;
+  const antiAiNote = antiAiOn
+    ? '\n- 加入自然真實感：避免塑膠皮膚、避免過度銳利、保留自然紋理與柔和對比'
+    : '';
+
   const userMessage = `你是一位頂尖的商業 AI 圖像 prompt 工程師，專精於廣告視覺、品牌行銷圖像。
 
 【任務】根據以下強化方向，重寫並升級這個 prompt。
 
-【強化方向】${dirs.length ? dirs.join('、') : '全面提升商業質感'}
+【強化方向】${dirs.length ? dirs.join('、') : '優化商業視覺質感'}
 
 【目標模型】${mlabel(model)}
 
 【嚴格規則】
-1. 必須完整保留原始 prompt 的所有主體、場景、產品、人物描述
-2. 在原有基礎上強化視覺細節、燈光、質感、構圖的商業感
-3. 輸出格式：純英文 prompt，一整段，不分點
-4. 絕對不可以：加說明文字、加標題、加引號、縮短內容、遺漏原始資訊
-5. 輸出長度必須比原始 prompt 更長更豐富${sfx ? '\n6. 結尾加上：' + sfx : ''}
+1. 必須完整保留原始 prompt 的所有主體、場景、產品、人物描述，不可縮短或遺漏
+2. 在原有基礎上優化視覺細節與商業感，但不要過度戲劇化
+3. 除非使用者明確指定，否則避免使用 luxury、hyperrealistic、flawless skin、high fashion 等過強風格詞
+4. 優先維持自然、舒服、親切的商業視覺感${antiAiNote}
+5. 輸出格式：純英文 prompt，一整段，不分點，不加說明文字${sfx ? '\n6. 結尾加上：' + sfx : ''}
 
 【原始 Prompt 如下，請強化它】
 ${input}
