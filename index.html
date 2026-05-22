@@ -742,15 +742,25 @@ async function enhancePrompt() {
   const model = document.getElementById('enhModel').value;
   const sfx   = MODEL_SUFFIXES[model] || '';
 
-  const systemPrompt = `你是一位頂尖的商業 AI 圖像 prompt 工程師，專精於廣告視覺、品牌行銷圖像。
-任務：根據指定的強化方向，重寫並升級 prompt。
-規則：
-- 保持原始意圖與主體
-- 大幅強化視覺細節、燈光、質感、構圖的商業感
-- 輸出全英文 prompt，專業簡潔
-- 不要加解釋、不要引號、只輸出 prompt 本身
-- 針對目標模型 ${mlabel(model)} 優化格式${sfx ? '\n- 結尾加上: '+sfx : ''}
-強化方向：${dirs.length ? dirs.join('、') : '全面提升商業質感'}`;
+  const userMessage = `你是一位頂尖的商業 AI 圖像 prompt 工程師，專精於廣告視覺、品牌行銷圖像。
+
+【任務】根據以下強化方向，重寫並升級這個 prompt。
+
+【強化方向】${dirs.length ? dirs.join('、') : '全面提升商業質感'}
+
+【目標模型】${mlabel(model)}
+
+【嚴格規則】
+1. 必須完整保留原始 prompt 的所有主體、場景、產品、人物描述
+2. 在原有基礎上強化視覺細節、燈光、質感、構圖的商業感
+3. 輸出格式：純英文 prompt，一整段，不分點
+4. 絕對不可以：加說明文字、加標題、加引號、縮短內容、遺漏原始資訊
+5. 輸出長度必須比原始 prompt 更長更豐富${sfx ? '\n6. 結尾加上：' + sfx : ''}
+
+【原始 Prompt 如下，請強化它】
+${input}
+
+請直接輸出強化後的 prompt，不要任何前言或說明：`;
 
   const btn = document.getElementById('enhBtn');
   btn.disabled = true;
@@ -764,9 +774,8 @@ async function enhancePrompt() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemPrompt }] },
-          contents: [{ role:'user', parts:[{ text:`請強化這個 prompt：\n${input}` }] }],
-          generationConfig: { maxOutputTokens:1000, temperature:0.7 }
+          contents: [{ role:'user', parts:[{ text: userMessage }] }],
+          generationConfig: { maxOutputTokens:1500, temperature:0.4 }
         })
       }
     );
