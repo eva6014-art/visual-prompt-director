@@ -6,61 +6,59 @@
 <title>AI 視覺導演工具</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #07070c;
-  --s1: #0e0e18;
-  --s2: #14141f;
-  --s3: #1c1c2a;
-  --border: #252535;
-  --border2: #2f2f45;
-  --gold: #c9a96e;
-  --gold2: #e8c98a;
-  --silver: #8a8aaa;
-  --text: #e2ddd4;
-  --muted: #5a5a78;
-  --green: #4ecb8d;
-  --red: #e06060;
-  --blue: #5a8fff;
+:root{
+  --bg:#07070c;--s1:#0e0e18;--s2:#14141f;--s3:#1c1c2a;
+  --border:#252535;--border2:#2f2f45;
+  --gold:#c9a96e;--gold2:#e8c98a;--silver:#8a8aaa;
+  --text:#e2ddd4;--muted:#5a5a78;--green:#4ecb8d;--red:#e06060;--blue:#5a8fff;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Noto Sans TC',sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 80% 50% at 10% 0%,rgba(201,169,110,.04) 0%,transparent 55%),
-    radial-gradient(ellipse 60% 60% at 90% 100%,rgba(90,143,255,.03) 0%,transparent 55%);
-  pointer-events:none;z-index:0;
-}
-.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh;position:relative;z-index:1}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 10% 0%,rgba(201,169,110,.04) 0%,transparent 55%),
+             radial-gradient(ellipse 60% 60% at 90% 100%,rgba(90,143,255,.03) 0%,transparent 55%);
+  pointer-events:none;z-index:0;}
 
-/* Sidebar */
+/* ── Top API Key Bar ── */
+.apibar{
+  position:sticky;top:0;z-index:100;
+  background:var(--s2);border-bottom:1px solid var(--border);
+  padding:9px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.apibar-label{font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+#geminiKey{
+  flex:1;max-width:340px;
+  background:var(--s1);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
+  padding:7px 12px;outline:none;transition:border-color .2s;
+}
+#geminiKey:focus{border-color:var(--gold)}
+#geminiKey::placeholder{color:var(--muted)}
+#keyStatus{
+  font-size:10px;padding:3px 10px;border-radius:10px;white-space:nowrap;
+  background:rgba(90,90,120,.1);border:1px solid var(--border);color:var(--muted);
+}
+#keyStatus.ok{background:rgba(78,203,141,.1);border-color:rgba(78,203,141,.3);color:var(--green);}
+.apibar-hint{font-size:10px;color:var(--muted);}
+.apibar-hint a{color:var(--gold);text-decoration:none;}
+.apibar-hint a:hover{text-decoration:underline;}
+
+/* ── Shell ── */
+.shell{display:flex;min-height:calc(100vh - 43px);position:relative;z-index:1;}
+
+/* ── Sidebar ── */
 .sidebar{
+  width:220px;flex-shrink:0;
   background:var(--s1);border-right:1px solid var(--border);
-  padding:28px 0;position:sticky;top:0;height:100vh;
-  display:flex;flex-direction:column;overflow:hidden;
+  display:flex;flex-direction:column;
+  position:sticky;top:43px;height:calc(100vh - 43px);overflow:hidden;
 }
-.logo{padding:0 20px 28px;border-bottom:1px solid var(--border);margin-bottom:20px;}
-.logo-mark{
-  font-family:'Cormorant Garamond',serif;font-size:11px;
-  letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;
-}
-.logo-title{
-  font-family:'Cormorant Garamond',serif;font-size:20px;
-  font-weight:300;color:var(--text);line-height:1.25;
-}
+.logo{padding:24px 20px 22px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.logo-mark{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.logo-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);line-height:1.25;}
 .logo-title em{font-style:italic;color:var(--gold)}
-.nav-section{
-  font-family:'Noto Sans TC',sans-serif;font-size:10px;
-  letter-spacing:.1em;color:var(--muted);padding:0 20px 10px;
-}
+.nav-section{font-size:10px;letter-spacing:.1em;color:var(--muted);padding:0 20px 10px;}
 .nav-item{
   display:flex;align-items:center;gap:10px;padding:10px 20px;
   cursor:pointer;transition:all .2s;border-left:2px solid transparent;
@@ -68,247 +66,202 @@ body::before{
 }
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,.02)}
 .nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,169,110,.05);}
-.nav-icon{font-size:14px;width:18px;text-align:center}
-.model-badge{
-  margin:auto 20px 20px;background:var(--s2);
-  border:1px solid var(--border2);border-radius:10px;padding:12px;
-}
-.model-badge-label{
-  font-family:'Noto Sans TC',sans-serif;font-size:10px;
-  color:var(--muted);margin-bottom:8px;
-}
-.model-select{
-  width:100%;background:var(--s3);border:1px solid var(--border2);
-  border-radius:6px;color:var(--text);font-family:'Noto Sans TC',sans-serif;
-  font-size:12px;padding:8px 10px;cursor:pointer;outline:none;
-}
-.model-select option{background:var(--s2)}
-.model-hint{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5;}
+.nav-icon{font-size:14px;width:18px;text-align:center;}
 .nav-badge{
   margin-left:auto;background:rgba(201,169,110,.15);
   border:1px solid rgba(201,169,110,.3);color:var(--gold);
-  font-size:10px;padding:1px 7px;border-radius:10px;
+  font-size:10px;padding:1px 7px;border-radius:10px;display:none;
 }
+.model-box{
+  margin:auto 16px 16px;background:var(--s2);
+  border:1px solid var(--border2);border-radius:10px;padding:12px;
+}
+.model-box-label{font-size:10px;color:var(--muted);margin-bottom:8px;}
+.model-box select{
+  width:100%;background:var(--s3);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:12px;
+  padding:7px 10px;cursor:pointer;outline:none;
+}
+.model-box select option{background:var(--s2)}
+.model-hint{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5;}
 
-/* Main */
-.main{padding:36px 40px 80px;max-width:860px}
-.page-header{margin-bottom:36px}
-.page-title{
-  font-family:'Cormorant Garamond',serif;font-size:30px;
-  font-weight:300;color:var(--text);line-height:1.1;margin-bottom:6px;
-}
+/* ── Main ── */
+.main{flex:1;padding:36px 40px 80px;max-width:860px;}
+.page-header{margin-bottom:32px;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--text);line-height:1.1;margin-bottom:5px;}
 .page-title em{font-style:italic;color:var(--gold)}
 .page-sub{font-size:11px;color:var(--muted);letter-spacing:.05em;}
 
-/* Panel */
-.panel{display:none}
-.panel.active{display:block;animation:fadeUp .3s ease}
+/* ── Panels ── */
+.panel{display:none;}
+.panel.active{display:block;animation:fadeUp .3s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* Field blocks */
-.field-block{
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:12px;padding:18px 20px;transition:border-color .2s;
-  margin-bottom:16px;
+/* ── Field Block ── */
+.fb{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px;transition:border-color .2s;}
+.fb:focus-within{border-color:var(--border2)}
+.fb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.fb-label{font-size:11px;font-weight:500;letter-spacing:.07em;color:var(--gold);}
+.fb-tag{font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid var(--border2);color:var(--muted);}
+.fb-desc{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;}
+textarea.fi,input.fi{
+  width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:13px;
+  padding:10px 12px;outline:none;transition:border-color .2s;resize:vertical;
 }
-.field-block:focus-within{border-color:var(--border2)}
-.field-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.field-label{
-  font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--gold);
+textarea.fi:focus,input.fi:focus{border-color:var(--border2)}
+textarea.fi{min-height:62px;}
+select.fi{
+  width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:12px;
+  padding:10px 12px;outline:none;cursor:pointer;
 }
-.field-tag{
-  font-size:10px;padding:2px 8px;border-radius:10px;
-  border:1px solid var(--border2);color:var(--muted);
-}
-.field-desc{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;}
-textarea.field-input,input.field-input{
-  width:100%;background:var(--s2);border:1px solid var(--border);
-  border-radius:8px;color:var(--text);font-family:'Noto Sans TC',sans-serif;
-  font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s;resize:vertical;
-}
-textarea.field-input:focus,input.field-input:focus{border-color:var(--border2)}
-textarea.field-input{min-height:62px}
-select.field-input{
-  width:100%;background:var(--s2);border:1px solid var(--border);
-  border-radius:8px;color:var(--text);font-family:'Noto Sans TC',sans-serif;
-  font-size:12px;padding:10px 12px;outline:none;cursor:pointer;
-}
-select.field-input option{background:var(--s2)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+select.fi option{background:var(--s2)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 
-/* Tags */
-.tags-wrap{display:flex;flex-wrap:wrap;gap:6px}
-.s-tag{
+/* ── Tags ── */
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{
   padding:5px 12px;background:var(--s2);border:1px solid var(--border);
-  border-radius:20px;font-size:11px;color:var(--muted);cursor:pointer;
-  transition:all .18s;user-select:none;
+  border-radius:20px;font-size:11px;color:var(--muted);
+  cursor:pointer;transition:all .18s;user-select:none;
 }
-.s-tag:hover{border-color:var(--border2);color:var(--text)}
-.s-tag.on{background:rgba(201,169,110,.1);border-color:var(--gold);color:var(--gold);}
-.s-tag.neg{background:rgba(224,96,96,.08);border-color:rgba(224,96,96,.4);color:#c08080;}
-.s-tag.neg.on{background:rgba(224,96,96,.18);border-color:var(--red);color:var(--red);}
+.tag:hover{border-color:var(--border2);color:var(--text)}
+.tag.on{background:rgba(201,169,110,.1);border-color:var(--gold);color:var(--gold);}
+.tag.neg{background:rgba(224,96,96,.08);border-color:rgba(224,96,96,.4);color:#c08080;}
+.tag.neg.on{background:rgba(224,96,96,.18);border-color:var(--red);color:var(--red);}
+.dtag{
+  padding:6px 14px;background:var(--s2);border:1px solid var(--border);
+  border-radius:20px;font-size:11px;color:var(--muted);
+  cursor:pointer;transition:all .18s;user-select:none;
+}
+.dtag:hover{border-color:var(--border2);color:var(--text)}
+.dtag.on{background:rgba(90,143,255,.1);border-color:var(--blue);color:var(--blue);}
 
-/* Output */
-.output-section{margin-top:32px}
-.output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.output-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-style:italic;}
-.output-grid{display:grid;gap:10px}
-.output-block{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
-.output-block-header{
+/* ── Explain ── */
+.xbtn{
+  background:none;border:none;font-size:10px;color:var(--muted);
+  cursor:pointer;padding:0 4px;transition:color .15s;
+}
+.xbtn:hover{color:var(--gold)}
+.xpanel{
+  background:var(--s3);border:1px solid var(--border2);border-radius:8px;
+  padding:12px 14px;margin-top:10px;font-size:12px;line-height:1.7;color:var(--silver);display:none;
+}
+.xpanel.show{display:block;animation:fadeUp .2s ease;}
+
+/* ── Output ── */
+.out-section{margin-top:32px;}
+.out-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.out-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-style:italic;}
+.out-grid{display:grid;gap:8px;}
+.out-block{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.out-block-head{
   display:flex;align-items:center;justify-content:space-between;
   padding:8px 14px;background:var(--s2);border-bottom:1px solid var(--border);
 }
 .ob-label{font-size:10px;color:var(--silver);letter-spacing:.05em;}
-.ob-copy{
+.cpbtn{
   background:none;border:1px solid var(--border);font-size:10px;
   color:var(--muted);cursor:pointer;padding:3px 8px;border-radius:4px;transition:all .15s;
 }
-.ob-copy:hover{color:var(--gold);border-color:var(--gold)}
-.ob-copy.copied{color:var(--green);border-color:var(--green)}
-.ob-text{padding:12px 14px;font-size:12px;line-height:1.75;color:var(--text);word-break:break-word;min-height:40px;font-family:'DM Mono',monospace;}
+.cpbtn:hover{color:var(--gold);border-color:var(--gold)}
+.cpbtn.ok{color:var(--green);border-color:var(--green)}
+.ob-text{padding:12px 14px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.75;color:var(--text);word-break:break-word;min-height:36px;}
 
-.full-prompt-box{
-  background:var(--s1);border:1px solid var(--gold);
-  border-radius:12px;overflow:hidden;margin-top:12px;
-}
-.fp-header{
+.full-box{background:var(--s1);border:1px solid var(--gold);border-radius:12px;overflow:hidden;margin-top:10px;}
+.full-head{
   display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;background:rgba(201,169,110,.06);
-  border-bottom:1px solid rgba(201,169,110,.2);
+  padding:12px 16px;background:rgba(201,169,110,.06);border-bottom:1px solid rgba(201,169,110,.2);
 }
-.fp-label{font-size:10px;letter-spacing:.1em;color:var(--gold);}
-.fp-text{padding:16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);word-break:break-word;}
-.fp-actions{
+.full-label{font-size:10px;letter-spacing:.1em;color:var(--gold);}
+.full-text{padding:16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);word-break:break-word;}
+.full-foot{
   display:flex;gap:8px;padding:12px 16px;
   border-top:1px solid rgba(201,169,110,.15);background:rgba(201,169,110,.03);
 }
 
-/* Buttons */
+/* ── Buttons ── */
 .btn{
   display:inline-flex;align-items:center;gap:7px;
   padding:10px 20px;border-radius:8px;font-size:12px;
-  letter-spacing:.05em;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;
-  font-family:'Noto Sans TC',sans-serif;
+  letter-spacing:.04em;cursor:pointer;border:none;transition:all .2s;
+  white-space:nowrap;font-family:'Noto Sans TC',sans-serif;
 }
-.btn-gold{background:var(--gold);color:#07070c;font-weight:500}
-.btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
-.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.btn-outline{background:none;border:1px solid var(--border2);color:var(--silver);}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
-.btn-danger{background:none;border:1px solid rgba(224,96,96,.3);color:#c08080}
-.btn-danger:hover{border-color:var(--red);color:var(--red)}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;align-items:center}
+.btn-gold{background:var(--gold);color:#07070c;font-weight:500;}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-out{background:none;border:1px solid var(--border2);color:var(--silver);}
+.btn-out:hover{border-color:var(--gold);color:var(--gold);}
+.btn-gh{background:none;border:1px solid var(--border);color:var(--muted);}
+.btn-gh:hover{color:var(--text);border-color:var(--border2);}
+.btn-del{background:none;border:1px solid rgba(224,96,96,.3);color:#c08080;}
+.btn-del:hover{border-color:var(--red);color:var(--red);}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;align-items:center;}
 
-/* Spinner */
-.spinner{
-  width:12px;height:12px;border:2px solid rgba(201,169,110,.3);
-  border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── Spinner ── */
+.spin{width:12px;height:12px;border:2px solid rgba(201,169,110,.3);border-top-color:var(--gold);border-radius:50%;animation:sp .6s linear infinite;display:inline-block;}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-/* Explain */
-.explain-btn{
-  display:inline-flex;align-items:center;background:none;border:none;
-  font-size:10px;color:var(--muted);cursor:pointer;gap:4px;padding:0 4px;transition:color .15s;
-}
-.explain-btn:hover{color:var(--gold)}
-.explain-panel{
-  background:var(--s3);border:1px solid var(--border2);border-radius:8px;
-  padding:12px 14px;margin-top:10px;font-size:12px;line-height:1.7;color:var(--silver);display:none;
-}
-.explain-panel.show{display:block;animation:fadeUp .2s ease}
+/* ── Model pill ── */
+.mpill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:10px;font-size:10px;}
+.mpill.chatgpt{background:rgba(16,163,127,.12);border:1px solid rgba(16,163,127,.3);color:#4ecb8d;}
+.mpill.midjourney{background:rgba(90,143,255,.12);border:1px solid rgba(90,143,255,.3);color:var(--blue);}
+.mpill.flux{background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.3);color:var(--gold);}
+.mpill.sdxl{background:rgba(180,100,220,.12);border:1px solid rgba(180,100,220,.3);color:#c070f0;}
+.mpill.gemini{background:rgba(234,180,50,.12);border:1px solid rgba(234,180,50,.3);color:#eab432;}
+.mpill.kling{background:rgba(224,96,96,.12);border:1px solid rgba(224,96,96,.3);color:#e09090;}
 
-/* Model pill */
-.model-pill{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:3px 10px;border-radius:10px;font-size:10px;
-}
-.model-pill.chatgpt{background:rgba(16,163,127,.12);border:1px solid rgba(16,163,127,.3);color:#4ecb8d}
-.model-pill.midjourney{background:rgba(90,143,255,.12);border:1px solid rgba(90,143,255,.3);color:var(--blue)}
-.model-pill.flux{background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.3);color:var(--gold)}
-.model-pill.sdxl{background:rgba(180,100,220,.12);border:1px solid rgba(180,100,220,.3);color:#c070f0}
-.model-pill.gemini{background:rgba(234,180,50,.12);border:1px solid rgba(234,180,50,.3);color:#eab432}
-.model-pill.kling{background:rgba(224,96,96,.12);border:1px solid rgba(224,96,96,.3);color:#e09090}
-
-/* Versions */
-.version-timeline{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.version-row{
+/* ── Versions ── */
+.ver-row{
   display:flex;align-items:flex-start;gap:12px;
   padding:14px 16px;background:var(--s1);border:1px solid var(--border);
-  border-radius:10px;transition:border-color .2s;
+  border-radius:10px;margin-bottom:8px;transition:border-color .2s;
 }
-.version-row:hover{border-color:var(--border2)}
-.version-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);margin-top:5px;flex-shrink:0;}
-.version-dot.current{background:var(--gold)}
-.version-info{flex:1}
-.version-tag{font-size:10px;color:var(--gold);letter-spacing:.05em;margin-bottom:4px;}
-.version-preview{
-  font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.5;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-.version-meta{font-size:10px;color:var(--muted);margin-top:6px;}
-.version-actions{display:flex;gap:6px;flex-shrink:0;}
-.vbtn{
-  background:none;border:1px solid var(--border);color:var(--muted);
-  font-size:11px;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .15s;
-}
-.vbtn:hover{color:var(--text);border-color:var(--border2)}
-.vbtn.del:hover{color:var(--red);border-color:var(--red)}
+.ver-row:hover{border-color:var(--border2);}
+.ver-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);margin-top:5px;flex-shrink:0;}
+.ver-dot.cur{background:var(--gold);}
+.ver-info{flex:1;}
+.ver-tag{font-size:10px;color:var(--gold);margin-bottom:4px;}
+.ver-preview{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ver-meta{font-size:10px;color:var(--muted);margin-top:6px;}
+.ver-acts{display:flex;gap:6px;flex-shrink:0;}
+.vbtn{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .15s;}
+.vbtn:hover{color:var(--text);border-color:var(--border2);}
+.vbtn.del:hover{color:var(--red);border-color:var(--red);}
 
-/* Enhance dir tags */
-.dir-grid{display:flex;flex-wrap:wrap;gap:6px}
-.dir-tag{
-  padding:6px 14px;background:var(--s2);border:1px solid var(--border);
-  border-radius:20px;font-size:11px;color:var(--muted);cursor:pointer;
-  transition:all .18s;user-select:none;
-}
-.dir-tag:hover{border-color:var(--border2);color:var(--text)}
-.dir-tag.on{background:rgba(90,143,255,.1);border-color:var(--blue);color:var(--blue);}
-
-/* API Key Bar */
-.apikey-bar{
-  background:var(--s2);border-bottom:1px solid var(--border);
-  padding:10px 40px;display:flex;align-items:center;gap:10px;
-  position:sticky;top:0;z-index:10;
-}
-.apikey-label{font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;}
-.apikey-input{
-  flex:1;max-width:380px;background:var(--s1);border:1px solid var(--border);
-  border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;
-  font-size:12px;padding:7px 12px;outline:none;transition:border-color .2s;
-}
-.apikey-input:focus{border-color:var(--gold)}
-.apikey-input::placeholder{color:var(--muted)}
-.apikey-status{
-  font-size:10px;padding:4px 10px;border-radius:10px;white-space:nowrap;
-}
-.apikey-status.ok{background:rgba(78,203,141,.1);border:1px solid rgba(78,203,141,.3);color:var(--green);}
-.apikey-status.empty{background:rgba(90,90,120,.1);border:1px solid var(--border);color:var(--muted);}
-.apikey-hint{font-size:10px;color:var(--muted);}
-.apikey-hint a{color:var(--gold);text-decoration:none;}
-.apikey-hint a:hover{text-decoration:underline;}
-
-/* Toast */
+/* ── Toast ── */
 .toast{
   position:fixed;bottom:28px;right:28px;
   background:var(--s2);border:1px solid var(--gold);border-radius:10px;
   padding:12px 18px;font-size:12px;color:var(--gold);z-index:999;
   transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);
 }
-.toast.show{transform:translateY(0);opacity:1}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:48px 24px;color:var(--muted);font-size:12px;line-height:1.8;}
 
 @media(max-width:700px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .main{padding:24px 16px 60px}
-  .two-col{grid-template-columns:1fr}
+  .shell{flex-direction:column;}
+  .sidebar{display:none;}
+  .main{padding:24px 16px 60px;}
+  .two-col{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
-<div class="layout">
+
+<!-- API Key 頂部列 -->
+<div class="apibar">
+  <span class="apibar-label">🔑 Google Gemini API Key</span>
+  <input id="geminiKey" type="password" autocomplete="off"
+    placeholder="貼上你的 API Key：AIza..." oninput="onKeyInput()">
+  <span id="keyStatus">未設定</span>
+  <span class="apibar-hint">沒有 Key？→ <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio 免費取得</a></span>
+</div>
+
+<div class="shell">
 
 <!-- 側欄 -->
 <aside class="sidebar">
@@ -316,23 +269,21 @@ select.field-input option{background:var(--s2)}
     <div class="logo-mark">商業 AI 視覺</div>
     <div class="logo-title">視覺 <em>Prompt</em><br>導演工具</div>
   </div>
-
   <div class="nav-section">工作流程</div>
-  <div class="nav-item active" onclick="nav('director')">
+  <div class="nav-item active" onclick="nav('director',this)">
     <span class="nav-icon">◈</span> 視覺導演
   </div>
-  <div class="nav-item" onclick="nav('enhance')">
+  <div class="nav-item" onclick="nav('enhance',this)">
     <span class="nav-icon">✦</span> 重寫與強化
   </div>
-  <div class="nav-item" onclick="nav('versions')" id="nav-versions">
+  <div class="nav-item" onclick="nav('versions',this)">
     <span class="nav-icon">⊕</span> 版本管理
-    <span class="nav-badge" id="version-count" style="display:none">0</span>
+    <span class="nav-badge" id="ver-badge">0</span>
   </div>
-
   <div style="margin-top:auto"></div>
-  <div class="model-badge">
-    <div class="model-badge-label">目標模型</div>
-    <select class="model-select" id="globalModel" onchange="onModelChange()">
+  <div class="model-box">
+    <div class="model-box-label">目標模型</div>
+    <select id="globalModel" onchange="onModelChange()">
       <option value="chatgpt">ChatGPT Image</option>
       <option value="midjourney">Midjourney</option>
       <option value="flux">Flux</option>
@@ -344,18 +295,6 @@ select.field-input option{background:var(--s2)}
   </div>
 </aside>
 
-<!-- API Key Bar -->
-<div style="grid-column:1/-1;background:var(--s2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:10;">
-  <span style="font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;">🔑 Google Gemini API Key</span>
-  <input id="geminiKey" type="password" autocomplete="off"
-    placeholder="貼上你的 API Key：AIza..."
-    oninput="onKeyInput()"
-    style="flex:1;max-width:360px;background:var(--s1);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:DM Mono,monospace;font-size:12px;padding:7px 12px;outline:none;transition:border-color .2s;"
-    onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
-  <span id="keyStatus" style="font-size:10px;padding:4px 10px;border-radius:10px;background:rgba(90,90,120,.1);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">未設定</span>
-  <span style="font-size:10px;color:var(--muted);">沒有 Key？→ <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--gold);text-decoration:none;">Google AI Studio 免費取得</a></span>
-</div>
-
 <!-- 主內容 -->
 <main class="main">
 
@@ -366,24 +305,22 @@ select.field-input option{background:var(--s2)}
     <div class="page-sub">商業 AI 視覺工作流 · 結構化 Prompt 架構</div>
   </div>
 
-  <!-- 01 主體 -->
-  <div class="field-block">
-    <div class="field-header">
-      <span class="field-label">01 · 主體描述</span>
-      <span class="field-tag">Subject</span>
+  <div class="fb">
+    <div class="fb-head">
+      <span class="fb-label">01 · 主體描述</span>
+      <span class="fb-tag">Subject</span>
     </div>
-    <div class="field-desc">畫面核心主體：人物、產品、場景，越具體越好</div>
-    <textarea class="field-input" id="f-subject" placeholder="例：一位 20 多歲的韓系女性，手持黑色高端信用卡，極簡妝容，優雅休閒穿搭"></textarea>
+    <div class="fb-desc">畫面核心主體：人物、產品、場景，越具體越好</div>
+    <textarea class="fi" id="f-subject" placeholder="例：一位 20 多歲的韓系女性，手持黑色高端信用卡，極簡妝容，優雅休閒穿搭"></textarea>
   </div>
 
-  <!-- 02+03 構圖 + 燈光 -->
   <div class="two-col">
-    <div class="field-block">
-      <div class="field-header">
-        <span class="field-label">02 · 構圖方式</span>
-        <button class="explain-btn" onclick="toggleExplain('comp')">？ 說明</button>
+    <div class="fb">
+      <div class="fb-head">
+        <span class="fb-label">02 · 構圖方式</span>
+        <button class="xbtn" onclick="toggleX('comp')">？ 說明</button>
       </div>
-      <select class="field-input" id="f-comp">
+      <select class="fi" id="f-comp">
         <option value="">選擇構圖...</option>
         <option value="centered symmetrical composition">中心對稱構圖</option>
         <option value="left-heavy editorial composition">左重心 Editorial 構圖</option>
@@ -395,21 +332,20 @@ select.field-input option{background:var(--s2)}
         <option value="close-up macro detail">極近景微距</option>
         <option value="portrait vertical crop">直幅人像裁切</option>
       </select>
-      <div class="explain-panel" id="explain-comp">
+      <div class="xpanel" id="x-comp">
         <strong>構圖說明：</strong><br>
         • <em>左重心 Editorial</em>：主體偏左，右側留白給文案，最常見廣告排版<br>
         • <em>浮空產品主角</em>：產品懸浮無背景，增強廣告感與精品感<br>
         • <em>俯視平鋪</em>：由上往下俯拍，常用於食品、生活感內容<br>
-        • <em>對角線張力</em>：斜線構圖增加動感與張力，適合運動、科技品牌
+        • <em>對角線張力</em>：斜線構圖增加動感，適合運動、科技品牌
       </div>
     </div>
-
-    <div class="field-block">
-      <div class="field-header">
-        <span class="field-label">03 · 燈光設定</span>
-        <button class="explain-btn" onclick="toggleExplain('light')">？ 說明</button>
+    <div class="fb">
+      <div class="fb-head">
+        <span class="fb-label">03 · 燈光設定</span>
+        <button class="xbtn" onclick="toggleX('light')">？ 說明</button>
       </div>
-      <select class="field-input" id="f-light">
+      <select class="fi" id="f-light">
         <option value="">選擇燈光...</option>
         <option value="soft studio lighting with subtle shadows">柔和棚拍燈光</option>
         <option value="cinematic side lighting with deep shadows">電影側光</option>
@@ -421,7 +357,7 @@ select.field-input option{background:var(--s2)}
         <option value="backlit rim light silhouette">逆光輪廓光</option>
         <option value="Korean beauty soft diffused light">韓系美妝柔光</option>
       </select>
-      <div class="explain-panel" id="explain-light">
+      <div class="xpanel" id="x-light">
         <strong>燈光說明：</strong><br>
         • <em>電影側光</em>：強烈側光製造深陰影，戲劇感、高質感<br>
         • <em>高調白底廣告燈</em>：均勻明亮，無死角，適合電商、EDM<br>
@@ -431,54 +367,52 @@ select.field-input option{background:var(--s2)}
     </div>
   </div>
 
-  <!-- 04 風格標籤 -->
-  <div class="field-block">
-    <div class="field-header">
-      <span class="field-label">04 · 視覺風格</span>
-      <span class="field-tag">商業導向</span>
+  <div class="fb">
+    <div class="fb-head">
+      <span class="fb-label">04 · 視覺風格</span>
+      <span class="fb-tag">商業導向</span>
     </div>
-    <div class="tags-wrap" id="style-tags">
-      <span class="s-tag" data-v="Korean commercial advertising aesthetic">韓系商業廣告</span>
-      <span class="s-tag" data-v="premium black and white editorial style">頂級黑白 Editorial</span>
-      <span class="s-tag" data-v="Taiwanese fintech visual clean modern">台灣金融科技視覺</span>
-      <span class="s-tag" data-v="clay chibi advertising character">黏土 Q 版廣告角色</span>
-      <span class="s-tag" data-v="Japanese magazine aesthetic minimalist">日系雜誌極簡</span>
-      <span class="s-tag" data-v="luxury cashback banner premium feel">精品回饋 Banner</span>
-      <span class="s-tag" data-v="floating UI advertising elements overlay">浮空 UI 廣告</span>
-      <span class="s-tag" data-v="Korean Instagram cafe mood aesthetic">韓系 IG 咖啡廳氛圍</span>
-      <span class="s-tag" data-v="high fashion editorial photography">高端時尚 Editorial</span>
-      <span class="s-tag" data-v="cinematic product photography">電影感產品攝影</span>
-      <span class="s-tag" data-v="clean minimal Scandinavian brand">北歐極簡品牌</span>
-      <span class="s-tag" data-v="luxury lifestyle aspirational visual">精品生活質感</span>
-      <span class="s-tag" data-v="social media campaign visual">社群行銷視覺</span>
-      <span class="s-tag" data-v="premium fintech app UI screenshot style">精品 Fintech App UI</span>
-      <span class="s-tag" data-v="Studio Ghibli inspired commercial">吉卜力商業風格</span>
-      <span class="s-tag" data-v="wabi-sabi Japanese minimalism">侘寂和風</span>
-      <span class="s-tag" data-v="art nouveau ornamental advertising">新藝術主義廣告</span>
-      <span class="s-tag" data-v="3D render commercial visualization">3D 商業渲染</span>
+    <div class="tags" id="style-tags">
+      <span class="tag" data-v="Korean commercial advertising aesthetic">韓系商業廣告</span>
+      <span class="tag" data-v="premium black and white editorial style">頂級黑白 Editorial</span>
+      <span class="tag" data-v="Taiwanese fintech visual clean modern">台灣金融科技視覺</span>
+      <span class="tag" data-v="clay chibi advertising character">黏土 Q 版廣告角色</span>
+      <span class="tag" data-v="Japanese magazine aesthetic minimalist">日系雜誌極簡</span>
+      <span class="tag" data-v="luxury cashback banner premium feel">精品回饋 Banner</span>
+      <span class="tag" data-v="floating UI advertising elements overlay">浮空 UI 廣告</span>
+      <span class="tag" data-v="Korean Instagram cafe mood aesthetic">韓系 IG 咖啡廳氛圍</span>
+      <span class="tag" data-v="high fashion editorial photography">高端時尚 Editorial</span>
+      <span class="tag" data-v="cinematic product photography">電影感產品攝影</span>
+      <span class="tag" data-v="clean minimal Scandinavian brand">北歐極簡品牌</span>
+      <span class="tag" data-v="luxury lifestyle aspirational visual">精品生活質感</span>
+      <span class="tag" data-v="social media campaign visual">社群行銷視覺</span>
+      <span class="tag" data-v="premium fintech app UI screenshot style">精品 Fintech App UI</span>
+      <span class="tag" data-v="Studio Ghibli inspired commercial">吉卜力商業風格</span>
+      <span class="tag" data-v="wabi-sabi Japanese minimalism">侘寂和風</span>
+      <span class="tag" data-v="art nouveau ornamental advertising">新藝術主義廣告</span>
+      <span class="tag" data-v="3D render commercial visualization">3D 商業渲染</span>
     </div>
   </div>
 
-  <!-- 05 廣告元素 -->
-  <div class="field-block">
-    <div class="field-header">
-      <span class="field-label">05 · 廣告視覺元素</span>
-      <button class="explain-btn" onclick="toggleExplain('adel')">？ 說明</button>
+  <div class="fb">
+    <div class="fb-head">
+      <span class="fb-label">05 · 廣告視覺元素</span>
+      <button class="xbtn" onclick="toggleX('adel')">？ 說明</button>
     </div>
-    <div class="field-desc">專屬商業視覺元素，讓畫面天生有「廣告感」</div>
-    <div class="tags-wrap" id="ad-tags">
-      <span class="s-tag" data-v="floating credit card with holographic sheen">浮空信用卡</span>
-      <span class="s-tag" data-v="scattered coins and currency elements">散落幣種元素</span>
-      <span class="s-tag" data-v="floating UI dashboard elements">浮空 UI 儀表板</span>
-      <span class="s-tag" data-v="product package hero center">產品包裝主角置中</span>
-      <span class="s-tag" data-v="QR code lifestyle integration">QR Code 生活場景</span>
-      <span class="s-tag" data-v="subtle brand logo space reserved left">左側預留品牌空間</span>
-      <span class="s-tag" data-v="text overlay friendly negative space">文案疊加留白區</span>
-      <span class="s-tag" data-v="discount badge seal element">折扣徽章元素</span>
-      <span class="s-tag" data-v="lifestyle product in hand natural use">生活情境手持產品</span>
-      <span class="s-tag" data-v="before after split composition">前後對比分割構圖</span>
+    <div class="fb-desc">專屬商業視覺元素，讓畫面天生有「廣告感」</div>
+    <div class="tags" id="ad-tags">
+      <span class="tag" data-v="floating credit card with holographic sheen">浮空信用卡</span>
+      <span class="tag" data-v="scattered coins and currency elements">散落幣種元素</span>
+      <span class="tag" data-v="floating UI dashboard elements">浮空 UI 儀表板</span>
+      <span class="tag" data-v="product package hero center">產品包裝主角置中</span>
+      <span class="tag" data-v="QR code lifestyle integration">QR Code 生活場景</span>
+      <span class="tag" data-v="subtle brand logo space reserved left">左側預留品牌空間</span>
+      <span class="tag" data-v="text overlay friendly negative space">文案疊加留白區</span>
+      <span class="tag" data-v="discount badge seal element">折扣徽章元素</span>
+      <span class="tag" data-v="lifestyle product in hand natural use">生活情境手持產品</span>
+      <span class="tag" data-v="before after split composition">前後對比分割構圖</span>
     </div>
-    <div class="explain-panel" id="explain-adel">
+    <div class="xpanel" id="x-adel">
       <strong>廣告視覺元素說明：</strong><br>
       • <em>文案疊加留白區</em>：畫面留有純色或漸層空間，讓行銷文案直接疊加，省去後製<br>
       • <em>浮空 UI 儀表板</em>：模擬 App 截圖或數字介面漂浮效果，常見於 Fintech 廣告<br>
@@ -486,21 +420,17 @@ select.field-input option{background:var(--s2)}
     </div>
   </div>
 
-  <!-- 06+07 情緒 + 渲染意圖 -->
   <div class="two-col">
-    <div class="field-block">
-      <div class="field-header">
-        <span class="field-label">06 · 情緒與色調</span>
-      </div>
-      <textarea class="field-input" id="f-mood" placeholder="例：充滿嚮往感、值得信賴、現代精品感&#10;色調：深海軍藍、金色點綴、純淨白底"></textarea>
+    <div class="fb">
+      <div class="fb-head"><span class="fb-label">06 · 情緒與色調</span></div>
+      <textarea class="fi" id="f-mood" placeholder="例：充滿嚮往感、值得信賴、現代精品感&#10;色調：深海軍藍、金色點綴、純淨白底"></textarea>
     </div>
-
-    <div class="field-block">
-      <div class="field-header">
-        <span class="field-label">07 · 渲染品質意圖</span>
-        <button class="explain-btn" onclick="toggleExplain('render')">？ 說明</button>
+    <div class="fb">
+      <div class="fb-head">
+        <span class="fb-label">07 · 渲染品質意圖</span>
+        <button class="xbtn" onclick="toggleX('render')">？ 說明</button>
       </div>
-      <select class="field-input" id="f-render">
+      <select class="fi" id="f-render">
         <option value="luxury commercial render, flawless skin, premium product finish">精品商業渲染</option>
         <option value="Korean advertising visual, beauty campaign quality">韓系廣告視覺</option>
         <option value="cinematic editorial photography, award winning">電影感 Editorial</option>
@@ -510,58 +440,56 @@ select.field-input option{background:var(--s2)}
         <option value="hyperrealistic advertising photography">超寫實廣告攝影</option>
         <option value="">不加後綴</option>
       </select>
-      <div class="explain-panel" id="explain-render">
-        <strong>渲染品質意圖說明：</strong>取代舊式「masterpiece, trending on ArtStation」<br>
-        • <em>精品商業渲染</em>：指定廣告製作等級質感，皮膚無瑕、產品精緻<br>
+      <div class="xpanel" id="x-render">
+        <strong>渲染品質意圖：</strong>取代舊式「masterpiece, trending on ArtStation」<br>
+        • <em>精品商業渲染</em>：廣告製作等級質感，皮膚無瑕、產品精緻<br>
         • <em>韓系廣告視覺</em>：隱含韓系廣告的色調、構圖與質感偏好<br>
-        • <em>EDM Banner 直用</em>：提示 AI 留出文案空間，背景乾淨，可直接用於郵件行銷
+        • <em>EDM Banner 直用</em>：留出文案空間，背景乾淨，可直接用於郵件行銷
       </div>
     </div>
   </div>
 
-  <!-- 08 負向 Prompt -->
-  <div class="field-block">
-    <div class="field-header">
-      <span class="field-label">08 · 負向 Prompt（排除元素）</span>
-      <span class="field-tag">Negative</span>
+  <div class="fb">
+    <div class="fb-head">
+      <span class="fb-label">08 · 負向 Prompt（排除元素）</span>
+      <span class="fb-tag">Negative</span>
     </div>
-    <div class="field-desc">快選常見排除項目，或自行輸入</div>
-    <div class="tags-wrap" id="neg-tags" style="margin-bottom:10px">
-      <span class="s-tag neg" data-v="blurry">模糊</span>
-      <span class="s-tag neg" data-v="low quality">低品質</span>
-      <span class="s-tag neg" data-v="watermark">浮水印</span>
-      <span class="s-tag neg" data-v="text in image">圖內文字</span>
-      <span class="s-tag neg" data-v="extra fingers, deformed hands">手部變形</span>
-      <span class="s-tag neg" data-v="overexposed">過曝</span>
-      <span class="s-tag neg" data-v="cartoon style">卡通感</span>
-      <span class="s-tag neg" data-v="amateur photography">業餘感</span>
-      <span class="s-tag neg" data-v="stock photo feel">Stock 圖感</span>
-      <span class="s-tag neg" data-v="cluttered background">雜亂背景</span>
+    <div class="fb-desc">快選常見排除項目，或自行輸入</div>
+    <div class="tags" id="neg-tags" style="margin-bottom:10px">
+      <span class="tag neg" data-v="blurry">模糊</span>
+      <span class="tag neg" data-v="low quality">低品質</span>
+      <span class="tag neg" data-v="watermark">浮水印</span>
+      <span class="tag neg" data-v="text in image">圖內文字</span>
+      <span class="tag neg" data-v="extra fingers, deformed hands">手部變形</span>
+      <span class="tag neg" data-v="overexposed">過曝</span>
+      <span class="tag neg" data-v="cartoon style">卡通感</span>
+      <span class="tag neg" data-v="amateur photography">業餘感</span>
+      <span class="tag neg" data-v="stock photo feel">Stock 圖感</span>
+      <span class="tag neg" data-v="cluttered background">雜亂背景</span>
     </div>
-    <textarea class="field-input" id="f-neg" placeholder="其他排除項目..." style="min-height:44px"></textarea>
+    <textarea class="fi" id="f-neg" placeholder="其他排除項目..." style="min-height:44px"></textarea>
   </div>
 
   <div class="btn-row">
     <button class="btn btn-gold" onclick="buildPrompt()">◈ 生成結構化 Prompt</button>
-    <button class="btn btn-ghost" onclick="clearDirector()">清除全部</button>
+    <button class="btn btn-gh" onclick="clearAll()">清除全部</button>
   </div>
 
-  <!-- 輸出區 -->
-  <div class="output-section" id="outputSection" style="display:none">
-    <div class="output-header">
-      <div class="output-title">結構化輸出結果</div>
-      <span id="output-model-pill"></span>
+  <div class="out-section" id="outputSection" style="display:none">
+    <div class="out-header">
+      <div class="out-title">結構化輸出結果</div>
+      <span id="out-model-pill"></span>
     </div>
-    <div class="output-grid" id="outputGrid"></div>
-    <div class="full-prompt-box">
-      <div class="fp-header">
-        <div class="fp-label">✦ 完整 Prompt — 可直接複製使用</div>
-        <button class="ob-copy" id="fpCopyBtn" onclick="copyFull()">複製全文</button>
+    <div class="out-grid" id="outputGrid"></div>
+    <div class="full-box">
+      <div class="full-head">
+        <div class="full-label">✦ 完整 Prompt — 可直接複製使用</div>
+        <button class="cpbtn" id="fpCopyBtn" onclick="copyFull()">複製全文</button>
       </div>
-      <div class="fp-text" id="fullPromptText"></div>
-      <div class="fp-actions">
-        <button class="btn btn-outline" onclick="saveVersion('v1 · 原始版')">⊕ 儲存為版本</button>
-        <button class="btn btn-ghost" onclick="sendToEnhance()">→ 送去強化</button>
+      <div class="full-text" id="fullText"></div>
+      <div class="full-foot">
+        <button class="btn btn-out" onclick="saveVersion('v1 · 原始版')">⊕ 儲存為版本</button>
+        <button class="btn btn-gh" onclick="sendToEnhance()">→ 送去強化</button>
       </div>
     </div>
   </div>
@@ -574,28 +502,28 @@ select.field-input option{background:var(--s2)}
     <div class="page-sub">AI 驅動的 Prompt 重寫與商業視覺強化</div>
   </div>
 
-  <div class="field-block">
-    <div class="field-header"><span class="field-label">輸入 Prompt</span></div>
-    <textarea class="field-input" id="enhInput" style="min-height:130px" placeholder="貼上任何 prompt，或從視覺導演頁面送過來..."></textarea>
+  <div class="fb">
+    <div class="fb-head"><span class="fb-label">輸入 Prompt</span></div>
+    <textarea class="fi" id="enhInput" style="min-height:130px" placeholder="貼上任何 prompt，或從視覺導演頁面送過來..."></textarea>
   </div>
 
-  <div class="field-block">
-    <div class="field-header"><span class="field-label">強化方向（可複選）</span></div>
-    <div class="dir-grid" id="dir-tags">
-      <span class="dir-tag" data-d="更像廣告">更像廣告</span>
-      <span class="dir-tag" data-d="更高級精品感">更高級精品感</span>
-      <span class="dir-tag" data-d="更像韓系品牌">更像韓系品牌</span>
-      <span class="dir-tag" data-d="更適合 EDM">更適合 EDM</span>
-      <span class="dir-tag" data-d="更適合社群貼文">更適合社群貼文</span>
-      <span class="dir-tag" data-d="更像動畫海報">更像動畫海報</span>
-      <span class="dir-tag" data-d="更簡潔精準">更簡潔精準</span>
-      <span class="dir-tag" data-d="增加細節層次">增加細節層次</span>
+  <div class="fb">
+    <div class="fb-head"><span class="fb-label">強化方向（可複選）</span></div>
+    <div class="tags" id="dir-tags">
+      <span class="dtag" data-d="更像廣告">更像廣告</span>
+      <span class="dtag" data-d="更高級精品感">更高級精品感</span>
+      <span class="dtag" data-d="更像韓系品牌">更像韓系品牌</span>
+      <span class="dtag" data-d="更適合 EDM">更適合 EDM</span>
+      <span class="dtag" data-d="更適合社群貼文">更適合社群貼文</span>
+      <span class="dtag" data-d="更像動畫海報">更像動畫海報</span>
+      <span class="dtag" data-d="更簡潔精準">更簡潔精準</span>
+      <span class="dtag" data-d="增加細節層次">增加細節層次</span>
     </div>
   </div>
 
-  <div class="field-block">
-    <div class="field-header"><span class="field-label">目標模型</span></div>
-    <select class="field-input" id="enhModel">
+  <div class="fb">
+    <div class="fb-head"><span class="fb-label">目標模型</span></div>
+    <select class="fi" id="enhModel">
       <option value="chatgpt">ChatGPT Image</option>
       <option value="midjourney">Midjourney</option>
       <option value="flux">Flux</option>
@@ -610,14 +538,14 @@ select.field-input option{background:var(--s2)}
   </div>
 
   <div id="enhOutput" style="display:none;margin-top:24px">
-    <div class="full-prompt-box">
-      <div class="fp-header">
-        <div class="fp-label">✦ 強化結果</div>
-        <button class="ob-copy" id="enhCopyBtn" onclick="copyEnhanced()">複製</button>
+    <div class="full-box">
+      <div class="full-head">
+        <div class="full-label">✦ 強化結果</div>
+        <button class="cpbtn" id="enhCopyBtn" onclick="copyEnhanced()">複製</button>
       </div>
-      <div class="fp-text" id="enhResult"></div>
-      <div class="fp-actions">
-        <button class="btn btn-outline" onclick="saveEnhancedVersion()">⊕ 儲存為版本</button>
+      <div class="full-text" id="enhResult"></div>
+      <div class="full-foot">
+        <button class="btn btn-out" onclick="saveEnhancedVersion()">⊕ 儲存為版本</button>
       </div>
     </div>
   </div>
@@ -629,277 +557,225 @@ select.field-input option{background:var(--s2)}
     <div class="page-title">Prompt <em>版本管理</em></div>
     <div class="page-sub">追蹤 Prompt 的演化歷程 · 隨時載入舊版本</div>
   </div>
-
-  <div id="versions-empty" class="field-block" style="text-align:center;padding:48px;display:none">
+  <div id="ver-empty" class="empty" style="display:none">
     <div style="font-size:32px;margin-bottom:12px">⊕</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.8">
-      尚無儲存的版本<br>從「視覺導演」或「重寫與強化」頁面儲存你的第一個版本
-    </div>
+    尚無儲存的版本<br>從「視覺導演」或「重寫與強化」頁面儲存你的第一個版本
   </div>
-
-  <div class="version-timeline" id="versionList"></div>
-
-  <div id="versions-actions" style="display:none;margin-top:16px">
-    <button class="btn btn-danger" onclick="clearAllVersions()">清除所有版本</button>
+  <div id="verList"></div>
+  <div id="ver-actions" style="display:none;margin-top:8px">
+    <button class="btn btn-del" onclick="clearAllVersions()">清除所有版本</button>
   </div>
 </div>
 
 </main>
-</div>
+</div><!-- end .shell -->
 
 <div class="toast" id="toast"></div>
 
 <script>
-let selStyles = new Set();
-let selAdEls = new Set();
-let selNegs = new Set();
-let selDirs = new Set();
-let versions = JSON.parse(localStorage.getItem('vpd_versions') || '[]');
-let currentFull = '';
-let currentEnhanced = '';
+// ── State ──
+const SEL = { styles: new Set(), adels: new Set(), negs: new Set(), dirs: new Set() };
+let versions = JSON.parse(localStorage.getItem('vpd2_versions') || '[]');
+let curFull = '', curEnhanced = '';
 
 const MODEL_HINTS = {
-  chatgpt: '自然語言描述，支援中英文混合',
-  midjourney: '英文關鍵詞 + 參數，如 --ar 16:9 --v 6',
-  flux: '詳細英文描述，強調質感細節',
-  sdxl: '短句關鍵詞，負向 prompt 效果佳',
-  gemini: '自然語言，可中英混合描述',
-  kling: '動態描述：鏡頭運動 + 場景變化',
+  chatgpt:'自然語言描述，支援中英文混合',
+  midjourney:'英文關鍵詞 + 參數，如 --ar 16:9 --v 6',
+  flux:'詳細英文描述，強調質感細節',
+  sdxl:'短句關鍵詞，負向 prompt 效果佳',
+  gemini:'自然語言，可中英混合描述',
+  kling:'動態描述：鏡頭運動 + 場景變化',
 };
-
 const MODEL_SUFFIXES = {
-  chatgpt: '',
-  midjourney: ' --ar 16:9 --v 6 --style raw --q 2',
-  flux: ' | ultra high quality, 8K resolution',
-  sdxl: '',
-  gemini: '',
-  kling: ', slow camera push-in, cinematic motion, 6 seconds',
+  chatgpt:'', midjourney:' --ar 16:9 --v 6 --style raw --q 2',
+  flux:' | ultra high quality, 8K resolution',
+  sdxl:'', gemini:'',
+  kling:', slow camera push-in, cinematic motion, 6 seconds',
 };
+function mlabel(m){
+  return {chatgpt:'ChatGPT Image',midjourney:'Midjourney',flux:'Flux',sdxl:'SDXL',gemini:'Gemini',kling:'Kling 影片'}[m]||m;
+}
 
-const BLOCK_LABELS = {
-  'Subject': '主體',
-  'Composition': '構圖',
-  'Lighting': '燈光',
-  'Style': '視覺風格',
-  'Advertising Elements': '廣告元素',
-  'Mood & Color': '情緒色調',
-  'Rendering Intent': '渲染品質',
-  'Negative Prompt': '負向 Prompt',
-};
-
-function nav(page) {
+// ── Nav ──
+function nav(page, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('panel-' + page).classList.add('active');
-  event.currentTarget.classList.add('active');
+  el.classList.add('active');
   if (page === 'versions') renderVersions();
-  updateVersionCount();
+  updateBadge();
 }
 
+// ── Model ──
 function onModelChange() {
-  const m = document.getElementById('globalModel').value;
-  document.getElementById('model-hint').textContent = MODEL_HINTS[m] || '';
+  document.getElementById('model-hint').textContent = MODEL_HINTS[document.getElementById('globalModel').value] || '';
 }
 
-function initTags(containerId, store) {
-  document.querySelectorAll(`#${containerId} .s-tag`).forEach(tag => {
-    tag.addEventListener('click', () => {
-      const v = tag.dataset.v;
-      if (store.has(v)) { store.delete(v); tag.classList.remove('on'); }
-      else { store.add(v); tag.classList.add('on'); }
+// ── Tags ──
+function initTags(containerId, store, cls='tag') {
+  document.querySelectorAll(`#${containerId} .${cls}`).forEach(t => {
+    t.addEventListener('click', () => {
+      const v = t.dataset.v || t.dataset.d;
+      if (store.has(v)) { store.delete(v); t.classList.remove('on'); }
+      else { store.add(v); t.classList.add('on'); }
     });
   });
 }
-initTags('style-tags', selStyles);
-initTags('ad-tags', selAdEls);
-initTags('neg-tags', selNegs);
+initTags('style-tags', SEL.styles);
+initTags('ad-tags',    SEL.adels);
+initTags('neg-tags',   SEL.negs);
+initTags('dir-tags',   SEL.dirs, 'dtag');
 
-document.querySelectorAll('#dir-tags .dir-tag').forEach(tag => {
-  tag.addEventListener('click', () => {
-    const d = tag.dataset.d;
-    if (selDirs.has(d)) { selDirs.delete(d); tag.classList.remove('on'); }
-    else { selDirs.add(d); tag.classList.add('on'); }
-  });
-});
-
-function toggleExplain(key) {
-  document.getElementById('explain-' + key).classList.toggle('show');
+// ── Explain ──
+function toggleX(key) {
+  document.getElementById('x-' + key).classList.toggle('show');
 }
 
+// ── Build Prompt ──
 function buildPrompt() {
   const subject = document.getElementById('f-subject').value.trim();
   if (!subject) { toast('請填入主體描述'); return; }
-
-  const comp = document.getElementById('f-comp').value;
-  const light = document.getElementById('f-light').value;
-  const styles = Array.from(selStyles);
-  const adEls = Array.from(selAdEls);
-  const mood = document.getElementById('f-mood').value.trim();
-  const render = document.getElementById('f-render').value;
-  const negExtra = document.getElementById('f-neg').value.trim();
-  const negs = Array.from(selNegs);
-  const model = document.getElementById('globalModel').value;
+  const comp    = document.getElementById('f-comp').value;
+  const light   = document.getElementById('f-light').value;
+  const styles  = [...SEL.styles];
+  const adels   = [...SEL.adels];
+  const mood    = document.getElementById('f-mood').value.trim();
+  const render  = document.getElementById('f-render').value;
+  const negExtra= document.getElementById('f-neg').value.trim();
+  const negs    = [...SEL.negs];
+  const model   = document.getElementById('globalModel').value;
 
   const blocks = [
-    { key: 'Subject', label: '主體', value: subject },
-    { key: 'Composition', label: '構圖', value: comp },
-    { key: 'Lighting', label: '燈光', value: light },
-    { key: 'Style', label: '視覺風格', value: styles.join(', ') },
-    { key: 'Advertising Elements', label: '廣告元素', value: adEls.join(', ') },
-    { key: 'Mood & Color', label: '情緒色調', value: mood },
-    { key: 'Rendering Intent', label: '渲染品質', value: render },
+    { label:'主體',       value: subject },
+    { label:'構圖',       value: comp },
+    { label:'燈光',       value: light },
+    { label:'視覺風格',   value: styles.join(', ') },
+    { label:'廣告元素',   value: adels.join(', ') },
+    { label:'情緒色調',   value: mood },
+    { label:'渲染品質',   value: render },
   ].filter(b => b.value);
 
   const negAll = [...negs, ...(negExtra ? [negExtra] : [])].join(', ');
 
-  const grid = document.getElementById('outputGrid');
-  grid.innerHTML = blocks.map(b => `
-    <div class="output-block">
-      <div class="output-block-header">
-        <span class="ob-label">${b.label}</span>
-        <button class="ob-copy" onclick="copyBlock(this)" data-text="${b.value.replace(/"/g,'&quot;')}">複製</button>
-      </div>
-      <div class="ob-text">${b.value}</div>
-    </div>
-  `).join('') + (negAll ? `
-    <div class="output-block">
-      <div class="output-block-header">
-        <span class="ob-label">負向 Prompt</span>
-        <button class="ob-copy" onclick="copyBlock(this)" data-text="${negAll.replace(/"/g,'&quot;')}">複製</button>
-      </div>
-      <div class="ob-text">${negAll}</div>
-    </div>
-  ` : '');
+  document.getElementById('outputGrid').innerHTML =
+    blocks.map(b => `
+      <div class="out-block">
+        <div class="out-block-head">
+          <span class="ob-label">${b.label}</span>
+          <button class="cpbtn" data-text="${b.value.replace(/"/g,'&quot;')}" onclick="cpBlock(this)">複製</button>
+        </div>
+        <div class="ob-text">${b.value}</div>
+      </div>`).join('') +
+    (negAll ? `
+      <div class="out-block">
+        <div class="out-block-head">
+          <span class="ob-label">負向 Prompt</span>
+          <button class="cpbtn" data-text="${negAll.replace(/"/g,'&quot;')}" onclick="cpBlock(this)">複製</button>
+        </div>
+        <div class="ob-text">${negAll}</div>
+      </div>` : '');
 
-  let full = blocks.map(b => b.value).join(', ') + (MODEL_SUFFIXES[model] || '');
-  currentFull = full;
-  document.getElementById('fullPromptText').textContent = full;
-
-  const pill = document.getElementById('output-model-pill');
-  pill.innerHTML = `<span class="model-pill ${model}">${modelLabel(model)}</span>`;
-
+  curFull = blocks.map(b => b.value).join(', ') + (MODEL_SUFFIXES[model] || '');
+  document.getElementById('fullText').textContent = curFull;
+  document.getElementById('out-model-pill').innerHTML = `<span class="mpill ${model}">${mlabel(model)}</span>`;
   document.getElementById('outputSection').style.display = 'block';
-  setTimeout(() => document.getElementById('outputSection').scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
+  setTimeout(() => document.getElementById('outputSection').scrollIntoView({behavior:'smooth',block:'nearest'}), 100);
 }
 
-function modelLabel(m) {
-  return { chatgpt:'ChatGPT Image', midjourney:'Midjourney', flux:'Flux', sdxl:'SDXL', gemini:'Gemini', kling:'Kling 影片' }[m] || m;
-}
-
-function clearDirector() {
+function clearAll() {
   ['f-subject','f-mood','f-neg'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-comp').value = '';
   document.getElementById('f-light').value = '';
   document.getElementById('f-render').selectedIndex = 0;
-  selStyles.clear(); selAdEls.clear(); selNegs.clear();
-  document.querySelectorAll('.s-tag').forEach(t => t.classList.remove('on'));
+  [SEL.styles, SEL.adels, SEL.negs].forEach(s => s.clear());
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('on'));
   document.getElementById('outputSection').style.display = 'none';
 }
 
-function copyBlock(btn) {
+function cpBlock(btn) {
   navigator.clipboard.writeText(btn.dataset.text);
-  btn.textContent = '✓'; btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('copied'); }, 1800);
+  btn.textContent = '✓'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('ok'); }, 1800);
 }
 
 function copyFull() {
-  navigator.clipboard.writeText(currentFull);
+  navigator.clipboard.writeText(curFull);
   const btn = document.getElementById('fpCopyBtn');
-  btn.textContent = '✓ 已複製'; btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = '複製全文'; btn.classList.remove('copied'); }, 2000);
+  btn.textContent = '✓ 已複製'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = '複製全文'; btn.classList.remove('ok'); }, 2000);
   toast('完整 Prompt 已複製！');
 }
 
 function sendToEnhance() {
-  document.getElementById('enhInput').value = currentFull;
-  document.querySelectorAll('.nav-item')[1].click();
+  document.getElementById('enhInput').value = curFull;
   document.getElementById('enhModel').value = document.getElementById('globalModel').value;
+  document.querySelectorAll('.nav-item')[1].click();
 }
 
-// ===== Gemini API Key =====
+// ── API Key ──
 function onKeyInput() {
   const key = document.getElementById('geminiKey').value.trim();
-  const status = document.getElementById('keyStatus');
+  const el  = document.getElementById('keyStatus');
   if (key.startsWith('AIza') && key.length > 20) {
-    status.textContent = '✓ 已設定';
-    status.style.cssText = 'font-size:10px;padding:4px 10px;border-radius:10px;background:rgba(78,203,141,.1);border:1px solid rgba(78,203,141,.3);color:var(--green);white-space:nowrap;';
+    el.textContent = '✓ 已設定'; el.className = 'ok';
     localStorage.setItem('gemini_key', key);
   } else {
-    status.textContent = '未設定';
-    status.style.cssText = 'font-size:10px;padding:4px 10px;border-radius:10px;background:rgba(90,90,120,.1);border:1px solid var(--border);color:var(--muted);white-space:nowrap;';
+    el.textContent = '未設定'; el.className = '';
   }
 }
-
-function getApiKey() {
-  const fromInput = document.getElementById('geminiKey').value.trim();
-  if (fromInput) return fromInput;
-  return localStorage.getItem('gemini_key') || '';
+function getKey() {
+  return document.getElementById('geminiKey').value.trim() || localStorage.getItem('gemini_key') || '';
 }
-
-// 頁面載入時還原 key
 (function restoreKey() {
-  const saved = localStorage.getItem('gemini_key');
-  if (saved) {
-    document.getElementById('geminiKey').value = saved;
-    setTimeout(onKeyInput, 0);
-  }
+  const k = localStorage.getItem('gemini_key');
+  if (k) { document.getElementById('geminiKey').value = k; setTimeout(onKeyInput, 0); }
 })();
 
+// ── Enhance ──
 async function enhancePrompt() {
   const input = document.getElementById('enhInput').value.trim();
   if (!input) { toast('請先輸入 prompt'); return; }
+  const key = getKey();
+  if (!key) { toast('請先在頂部輸入 Google Gemini API Key'); document.getElementById('geminiKey').focus(); return; }
 
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    toast('請先在上方輸入 Google Gemini API Key');
-    document.getElementById('geminiKey').focus();
-    return;
-  }
-
-  const dirs = Array.from(selDirs);
+  const dirs  = [...SEL.dirs];
   const model = document.getElementById('enhModel').value;
-  const modelSuffix = MODEL_SUFFIXES[model] || '';
+  const sfx   = MODEL_SUFFIXES[model] || '';
 
   const systemPrompt = `你是一位頂尖的商業 AI 圖像 prompt 工程師，專精於廣告視覺、品牌行銷圖像。
 任務：根據指定的強化方向，重寫並升級 prompt。
-
 規則：
 - 保持原始意圖與主體
 - 大幅強化視覺細節、燈光、質感、構圖的商業感
 - 輸出全英文 prompt，專業簡潔
 - 不要加解釋、不要引號、只輸出 prompt 本身
-- 針對目標模型 ${modelLabel(model)} 優化格式${modelSuffix ? `\n- 結尾加上: ${modelSuffix}` : ''}
-
+- 針對目標模型 ${mlabel(model)} 優化格式${sfx ? '\n- 結尾加上: '+sfx : ''}
 強化方向：${dirs.length ? dirs.join('、') : '全面提升商業質感'}`;
 
   const btn = document.getElementById('enhBtn');
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> AI 處理中...';
+  btn.innerHTML = '<span class="spin"></span> AI 處理中...';
   document.getElementById('enhOutput').style.display = 'none';
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemPrompt }] },
-          contents: [{ role: 'user', parts: [{ text: `請強化這個 prompt：\n${input}` }] }],
-          generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+          contents: [{ role:'user', parts:[{ text:`請強化這個 prompt：\n${input}` }] }],
+          generationConfig: { maxOutputTokens:1000, temperature:0.7 }
         })
       }
     );
     const data = await res.json();
-    if (data.error) {
-      toast('API 錯誤：' + (data.error.message || '請確認 Key 是否正確'));
-      return;
-    }
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    currentEnhanced = text.trim();
-    document.getElementById('enhResult').textContent = currentEnhanced;
+    if (data.error) { toast('API 錯誤：' + (data.error.message || '請確認 Key 是否正確')); return; }
+    curEnhanced = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+    document.getElementById('enhResult').textContent = curEnhanced;
     document.getElementById('enhOutput').style.display = 'block';
-  } catch (e) {
+  } catch(e) {
     toast('連線失敗，請確認網路或 API Key');
   } finally {
     btn.disabled = false;
@@ -908,113 +784,101 @@ async function enhancePrompt() {
 }
 
 function copyEnhanced() {
-  navigator.clipboard.writeText(currentEnhanced);
+  navigator.clipboard.writeText(curEnhanced);
   const btn = document.getElementById('enhCopyBtn');
-  btn.textContent = '✓ 已複製'; btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('copied'); }, 2000);
+  btn.textContent = '✓ 已複製'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('ok'); }, 2000);
   toast('強化結果已複製！');
 }
 
+// ── Versions ──
 function saveVersion(tag) {
-  if (!currentFull) { toast('請先生成 Prompt'); return; }
+  if (!curFull) { toast('請先生成 Prompt'); return; }
   const model = document.getElementById('globalModel').value;
-  const n = versions.length + 1;
-  const entry = {
-    id: Date.now(),
-    tag: tag || `v${n} · 原始版`,
-    text: currentFull, model,
-    date: new Date().toLocaleDateString('zh-TW', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
-  };
-  versions.unshift(entry);
-  localStorage.setItem('vpd_versions', JSON.stringify(versions));
-  updateVersionCount();
-  toast(`已儲存：${entry.tag}`);
+  versions.unshift({
+    id: Date.now(), tag: tag || `v${versions.length+1} · 原始版`,
+    text: curFull, model,
+    date: new Date().toLocaleDateString('zh-TW',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+  });
+  persist(); updateBadge(); toast('已儲存版本');
 }
 
 function saveEnhancedVersion() {
-  if (!currentEnhanced) return;
+  if (!curEnhanced) return;
   const model = document.getElementById('enhModel').value;
-  const dirs = Array.from(selDirs);
-  const tag = `v${versions.length + 1} · ${dirs[0] || '強化版'}`;
-  const entry = {
-    id: Date.now(), tag, text: currentEnhanced, model,
-    date: new Date().toLocaleDateString('zh-TW', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })
-  };
-  versions.unshift(entry);
-  localStorage.setItem('vpd_versions', JSON.stringify(versions));
-  updateVersionCount();
-  toast(`已儲存：${tag}`);
+  const dirs  = [...SEL.dirs];
+  const tag   = `v${versions.length+1} · ${dirs[0]||'強化版'}`;
+  versions.unshift({ id:Date.now(), tag, text:curEnhanced, model,
+    date: new Date().toLocaleDateString('zh-TW',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+  });
+  persist(); updateBadge(); toast(`已儲存：${tag}`);
 }
 
-function updateVersionCount() {
-  const badge = document.getElementById('version-count');
-  badge.textContent = versions.length;
-  badge.style.display = versions.length ? 'inline' : 'none';
+function persist() { localStorage.setItem('vpd2_versions', JSON.stringify(versions)); }
+
+function updateBadge() {
+  const b = document.getElementById('ver-badge');
+  b.textContent = versions.length;
+  b.style.display = versions.length ? 'inline' : 'none';
 }
 
 function renderVersions() {
-  const list = document.getElementById('versionList');
-  const empty = document.getElementById('versions-empty');
-  const actions = document.getElementById('versions-actions');
+  const list    = document.getElementById('verList');
+  const empty   = document.getElementById('ver-empty');
+  const actions = document.getElementById('ver-actions');
   if (!versions.length) {
     list.innerHTML = ''; empty.style.display = 'block'; actions.style.display = 'none'; return;
   }
   empty.style.display = 'none'; actions.style.display = 'block';
-  list.innerHTML = versions.map((v, i) => `
-    <div class="version-row">
-      <div class="version-dot ${i === 0 ? 'current' : ''}"></div>
-      <div class="version-info">
+  list.innerHTML = versions.map((v,i) => `
+    <div class="ver-row">
+      <div class="ver-dot ${i===0?'cur':''}"></div>
+      <div class="ver-info">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <div class="version-tag">${v.tag}</div>
-          <span class="model-pill ${v.model}">${modelLabel(v.model)}</span>
+          <div class="ver-tag">${v.tag}</div>
+          <span class="mpill ${v.model}">${mlabel(v.model)}</span>
         </div>
-        <div class="version-preview">${v.text}</div>
-        <div class="version-meta">${v.date}</div>
+        <div class="ver-preview">${v.text}</div>
+        <div class="ver-meta">${v.date}</div>
       </div>
-      <div class="version-actions">
-        <button class="vbtn" onclick="copyVersion(${v.id})">複製</button>
+      <div class="ver-acts">
+        <button class="vbtn" onclick="cpVersion(${v.id})">複製</button>
         <button class="vbtn" onclick="loadVersion(${v.id})">載入</button>
-        <button class="vbtn del" onclick="deleteVersion(${v.id})">✕</button>
+        <button class="vbtn del" onclick="delVersion(${v.id})">✕</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function copyVersion(id) {
-  const v = versions.find(x => x.id === id);
+function cpVersion(id) {
+  const v = versions.find(x=>x.id===id);
   if (v) { navigator.clipboard.writeText(v.text); toast('已複製！'); }
 }
-
 function loadVersion(id) {
-  const v = versions.find(x => x.id === id);
+  const v = versions.find(x=>x.id===id);
   if (v) {
     document.getElementById('enhInput').value = v.text;
-    document.querySelectorAll('.nav-item')[1].click();
     document.getElementById('enhModel').value = v.model;
+    document.querySelectorAll('.nav-item')[1].click();
     toast('已載入到重寫強化頁');
   }
 }
-
-function deleteVersion(id) {
-  versions = versions.filter(v => v.id !== id);
-  localStorage.setItem('vpd_versions', JSON.stringify(versions));
-  updateVersionCount(); renderVersions();
+function delVersion(id) {
+  versions = versions.filter(v=>v.id!==id);
+  persist(); updateBadge(); renderVersions();
 }
-
 function clearAllVersions() {
   if (!confirm('確定清除所有版本？')) return;
-  versions = [];
-  localStorage.setItem('vpd_versions', JSON.stringify(versions));
-  updateVersionCount(); renderVersions();
+  versions = []; persist(); updateBadge(); renderVersions();
 }
 
+// ── Toast ──
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-updateVersionCount();
+updateBadge();
 </script>
 </body>
 </html>
