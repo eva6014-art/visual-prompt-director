@@ -119,6 +119,18 @@ select.fi{
 select.fi option{background:var(--s2)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 
+/* ── Style Grid ── */
+.style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;}
+.style-card{
+  background:var(--s2);border:2px solid var(--border);border-radius:10px;
+  overflow:hidden;cursor:pointer;transition:all .2s;text-align:center;
+}
+.style-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.style-card.on{border-color:var(--gold);background:rgba(201,169,110,.08);}
+.style-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.style-card span{display:block;font-size:10px;padding:5px 4px;color:var(--muted);line-height:1.3;}
+.style-card.on span{color:var(--gold);}
+
 /* ── Tags ── */
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{
@@ -370,28 +382,10 @@ select.fi option{background:var(--s2)}
   <div class="fb">
     <div class="fb-head">
       <span class="fb-label">04 · 視覺風格</span>
-      <span class="fb-tag">商業導向</span>
+      <span class="fb-tag">點圖選擇</span>
     </div>
-    <div class="tags" id="style-tags">
-      <span class="tag" data-v="Korean commercial advertising aesthetic">韓系商業廣告</span>
-      <span class="tag" data-v="premium black and white editorial style">頂級黑白 Editorial</span>
-      <span class="tag" data-v="Taiwanese fintech visual clean modern">台灣金融科技視覺</span>
-      <span class="tag" data-v="clay chibi advertising character">黏土 Q 版廣告角色</span>
-      <span class="tag" data-v="Japanese magazine aesthetic minimalist">日系雜誌極簡</span>
-      <span class="tag" data-v="luxury cashback banner premium feel">精品回饋 Banner</span>
-      <span class="tag" data-v="floating UI advertising elements overlay">浮空 UI 廣告</span>
-      <span class="tag" data-v="Korean Instagram cafe mood aesthetic">韓系 IG 咖啡廳氛圍</span>
-      <span class="tag" data-v="high fashion editorial photography">高端時尚 Editorial</span>
-      <span class="tag" data-v="cinematic product photography">電影感產品攝影</span>
-      <span class="tag" data-v="clean minimal Scandinavian brand">北歐極簡品牌</span>
-      <span class="tag" data-v="luxury lifestyle aspirational visual">精品生活質感</span>
-      <span class="tag" data-v="social media campaign visual">社群行銷視覺</span>
-      <span class="tag" data-v="premium fintech app UI screenshot style">精品 Fintech App UI</span>
-      <span class="tag" data-v="Studio Ghibli inspired commercial">吉卜力商業風格</span>
-      <span class="tag" data-v="wabi-sabi Japanese minimalism">侘寂和風</span>
-      <span class="tag" data-v="art nouveau ornamental advertising">新藝術主義廣告</span>
-      <span class="tag" data-v="3D render commercial visualization">3D 商業渲染</span>
-    </div>
+    <div class="fb-desc">點擊圖卡選擇風格，可複選</div>
+    <div class="style-grid" id="style-tags"></div>
   </div>
 
   <div class="fb">
@@ -611,6 +605,57 @@ function onModelChange() {
   document.getElementById('model-hint').textContent = MODEL_HINTS[document.getElementById('globalModel').value] || '';
 }
 
+// ── Style Grid Data ──
+const STYLES = [
+  { label:'寫實攝影',       v:'photorealistic photography, hyperrealistic, DSLR quality',                          img:'https://github.com/user-attachments/assets/f2640e9c-4672-4c99-b6df-3e96fd9aa667' },
+  { label:'極簡產品棚拍',   v:'minimalist product photography, clean white studio background, commercial shot',    img:'https://github.com/user-attachments/assets/b8e6c866-bda5-4b1a-981f-1388a5b4d175' },
+  { label:'奢品廣告攝影',   v:'luxury campaign photography, premium brand advertising, high fashion editorial',    img:'https://github.com/user-attachments/assets/254e9b30-a944-47a1-a7f0-98eab8cac0d6' },
+  { label:'電影質感',       v:'cinematic film photography, movie still, anamorphic lens, film grain',              img:'https://github.com/user-attachments/assets/35bedadd-47f9-40bb-b270-994c9ca027ad' },
+  { label:'動漫風格',       v:'anime style illustration, Japanese animation, vibrant colors',                      img:'https://github.com/user-attachments/assets/8429c9f4-744e-4117-860e-67ec5eb88a63' },
+  { label:'日本少女漫畫',   v:'shoujo manga style, delicate line art, sparkles, soft pastel tones',               img:'https://github.com/user-attachments/assets/0c1f6d0a-756b-4098-be15-4d046df05ab8' },
+  { label:'日本少年漫畫',   v:'shounen manga style, dynamic action lines, bold ink, expressive faces',            img:'https://github.com/user-attachments/assets/2f2160d1-42bb-43bd-947c-59b14a82f87b' },
+  { label:'黑白少女漫畫',   v:'black and white shoujo manga, ink illustration, delicate linework, no color',       img:'https://github.com/user-attachments/assets/c7764b5b-2e1a-4761-8099-451617928183' },
+  { label:'黑白少年漫畫',   v:'black and white shounen manga, bold ink lines, action composition, no color',       img:'https://github.com/user-attachments/assets/df505f44-b98e-43b3-80b7-65f080d3f99c' },
+  { label:'扁平化插畫',     v:'flat vector illustration, clean geometric shapes, minimal shadows, bold colors',    img:'https://github.com/user-attachments/assets/0439d7e4-00ee-4586-b931-fd15ac3610cf' },
+  { label:'日系扁平海報',   v:'Japanese flat poster design, clean typography, graphic illustration style',         img:'https://github.com/user-attachments/assets/83cff9f7-e654-4f51-8252-754b9d0665d3' },
+  { label:'扁平資訊圖表',   v:'flat infographic design, data visualization, icon-based illustration, clean layout',img:'https://github.com/user-attachments/assets/5b88693c-966d-4692-8e84-b2c301eed685' },
+  { label:'雜誌編輯插畫',   v:'editorial magazine illustration, sophisticated graphic art, publication quality',   img:'https://github.com/user-attachments/assets/e6d6d696-ccd9-4945-ac3e-bcd1bdc42f5f' },
+  { label:'扁平商標設計',   v:'flat logo design style, brand identity illustration, clean vector graphic',         img:'https://github.com/user-attachments/assets/3a610d6d-f72a-42d9-9913-a7bad8a8e63f' },
+  { label:'企業孟菲斯風格', v:'corporate memphis style, geometric shapes, bright colors, business illustration',   img:'https://github.com/user-attachments/assets/f867062f-9bed-4c49-bc71-ea8ddf89065a' },
+  { label:'日本編輯插畫海報',v:'Japanese editorial illustration poster, refined graphic design, artistic layout',  img:'https://github.com/user-attachments/assets/25bb1fae-06f2-4f83-bed0-3027deca8d23' },
+  { label:'日本活潑海報插畫',v:'Japanese naive risograph poster, playful illustration, retro print texture',       img:'https://github.com/user-attachments/assets/06595399-e743-4904-947c-bde733b97060' },
+  { label:'台灣老街城市插畫',v:'Taiwan old street city illustration, nostalgic urban scene, local culture art',   img:'https://github.com/user-attachments/assets/60468818-6ee5-40c5-8160-ede35ea11955' },
+  { label:'等角城市插畫',   v:'isometric city illustration, editorial isometric design, detailed architectural',  img:'https://github.com/user-attachments/assets/a2c6bc3f-81ab-4887-93e4-b441d0aeab35' },
+  { label:'3D 渲染',        v:'3D render, cinema 4D style, octane render, realistic 3D visualization',            img:'https://github.com/user-attachments/assets/5bfa218b-bb60-40c0-8a17-104c82de0884' },
+  { label:'3D 黏土圖示',    v:'3D clay icon style, cute chibi 3D render, pastel clay material, soft lighting',    img:'https://github.com/user-attachments/assets/5e584a4c-8027-456a-b410-1fced2a7ed81' },
+  { label:'賽博龐克',       v:'cyberpunk aesthetic, neon lights, dark city, rain reflections, futuristic dystopia',img:'https://github.com/user-attachments/assets/f7b0bea4-2dd7-4379-8bb9-5407043ddbf9' },
+  { label:'水彩畫',         v:'watercolor painting, soft washes, organic texture, artistic hand-painted style',   img:'https://github.com/user-attachments/assets/330b2c3e-75d9-42ca-9ae7-bd466770bc50' },
+  { label:'油畫',           v:'oil painting, thick impasto brushwork, classical painting technique, rich texture', img:'https://github.com/user-attachments/assets/1ad87b4d-5e2e-46ed-9bf4-a7722275632b' },
+  { label:'普普藝術',       v:'pop art style, bold outlines, Ben-Day dots, vivid flat colors, Andy Warhol inspired',img:'https://github.com/user-attachments/assets/a2c6bc3f-81ab-4887-93e4-b441d0aeab35' },
+  { label:'韓系Q版企業廣告插畫',v:'Korean chibi business illustration, cute character advertising, K-style commercial art',img:'https://github.com/user-attachments/assets/a90ab663-b704-4099-a5ed-785d000cb7ce' },
+  { label:'日系簡約輪廓插畫',v:'Japanese minimal outline illustration, clean line art, monochrome contour style',  img:'https://github.com/user-attachments/assets/ed34b27a-dede-45ca-a780-51925a6dc3d8' },
+  { label:'隨性滑鼠畫',     v:'MS paint style illustration, naive digital drawing, intentionally rough and playful',img:'https://github.com/user-attachments/assets/43116953-9527-47e9-83b7-a9008495cef6' },
+  { label:'韓系人物漫畫插畫',v:'Korean indie comic illustration, webtoon character style, soft line art',          img:'https://github.com/user-attachments/assets/429f44a8-747f-4c85-9164-4686a1f99fd1' },
+];
+
+function buildStyleGrid() {
+  const grid = document.getElementById('style-tags');
+  grid.innerHTML = STYLES.map((s, i) => `
+    <div class="style-card" data-v="${s.v}" data-i="${i}" onclick="toggleStyle(this)">
+      <img src="${s.img}" alt="${s.label}" loading="lazy">
+      <span>${s.label}</span>
+    </div>
+  `).join('');
+}
+
+function toggleStyle(card) {
+  const v = card.dataset.v;
+  if (SEL.styles.has(v)) { SEL.styles.delete(v); card.classList.remove('on'); }
+  else { SEL.styles.add(v); card.classList.add('on'); }
+}
+
+buildStyleGrid();
+
 // ── Tags ──
 function initTags(containerId, store, cls='tag') {
   document.querySelectorAll(`#${containerId} .${cls}`).forEach(t => {
@@ -621,7 +666,7 @@ function initTags(containerId, store, cls='tag') {
     });
   });
 }
-initTags('style-tags', SEL.styles);
+// style-tags handled by style-grid cards
 initTags('ad-tags',    SEL.adels);
 initTags('neg-tags',   SEL.negs);
 initTags('dir-tags',   SEL.dirs, 'dtag');
@@ -689,6 +734,7 @@ function clearAll() {
   document.getElementById('f-render').selectedIndex = 0;
   [SEL.styles, SEL.adels, SEL.negs].forEach(s => s.clear());
   document.querySelectorAll('.tag').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.style-card').forEach(c => c.classList.remove('on'));
   document.getElementById('outputSection').style.display = 'none';
 }
 
