@@ -595,7 +595,7 @@ select.fi option{background:var(--s2)}
       <span class="dtag" data-d="更簡潔精準">更簡潔精準</span>
     </div>
     <div style="font-size:10px;color:var(--muted);margin-bottom:6px;margin-top:4px;">🎬 強度提升</div>
-    <div class="tags">
+    <div class="tags" id="dir-tags-strong">
       <span class="dtag" data-d="更像廣告、更有商業感">更像廣告</span>
       <span class="dtag" data-d="更高級精品感">更高級精品感</span>
       <span class="dtag" data-d="更像韓系高端品牌">更像韓系品牌</span>
@@ -760,6 +760,7 @@ function initTags(containerId, store, cls='tag') {
 initTags('ad-tags',    SEL.adels);
 initTags('neg-tags',   SEL.negs);
 initTags('dir-tags',   SEL.dirs, 'dtag');
+initTags('dir-tags-strong', SEL.dirs, 'dtag');
 
 // ── Explain ──
 function toggleX(key) {
